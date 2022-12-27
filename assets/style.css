@@ -1,0 +1,25 @@
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.grid-wrapper {
+  margin: auto;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  border: 1px solid black;
+}
+.grid-wrapper div {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: 1px solid red;
+  font-size: 32px;
+}
