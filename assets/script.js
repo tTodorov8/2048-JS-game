@@ -1,9 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const gridWrapper = document.querySelector(".grid-wrapper");
-  const scoreDisplay = document.querySelector(".score");
+  const scoreDisplay = document.querySelector("#score");
   const resultDisplay = document.querySelector("#result");
+  const bestScoreDisplay = document.querySelector("#best-score");
+  const newGameButton = document.querySelector("#new-game");
+
+  let bestScore = JSON.parse(localStorage.getItem("bestScore"));
   const width = 4;
   let squaresArray = [];
+  let score = 0;
 
   function createGridBoard() {
     for (let i = 0; i < width * width; i++) {
@@ -14,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     generateRandomNumber();
     generateRandomNumber();
+    checkForZeros();
   }
   createGridBoard();
 
@@ -22,14 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let randomNumber = Math.floor(Math.random() * squaresArray.length);
     if (squaresArray[randomNumber].innerHTML == 0) {
       squaresArray[randomNumber].innerHTML = 2;
+      checkForLoose();
     } else {
       generateRandomNumber();
     }
   }
-  // swipe right
+  // Swipe right
   function moveRight() {
     for (let i = 0; i < width * width; i++) {
-      if (i % 4 === 0) {
+      if (i % width === 0) {
         let totalOne = squaresArray[i].innerHTML;
         let totalTwo = squaresArray[i + 1].innerHTML;
         let totalThree = squaresArray[i + 2].innerHTML;
@@ -53,10 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // swipe left
+  // Swipe left
   function moveLeft() {
     for (let i = 0; i < width * width; i++) {
-      if (i % 4 === 0) {
+      if (i % width === 0) {
         let totalOne = squaresArray[i].innerHTML;
         let totalTwo = squaresArray[i + 1].innerHTML;
         let totalThree = squaresArray[i + 2].innerHTML;
@@ -79,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
-  // swipe down
+  // Swipe down
   function moveDown() {
     for (let i = 0; i < width; i++) {
       let totalOne = squaresArray[i].innerHTML;
@@ -96,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
       let missing = width - filteredColumn.length;
       let zeros = Array(missing).fill(0);
       let newColumn = zeros.concat(filteredColumn);
-      console.log(newColumn);
 
       squaresArray[i].innerHTML = newColumn[0];
       squaresArray[i + width].innerHTML = newColumn[1];
@@ -104,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       squaresArray[i + width * 3].innerHTML = newColumn[3];
     }
   }
-  //swipe Up
+  //Swipe Up
   function moveUp() {
     for (let i = 0; i < width; i++) {
       let totalOne = squaresArray[i].innerHTML;
@@ -121,7 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
       let missing = width - filteredColumn.length;
       let zeros = Array(missing).fill(0);
       let newColumn = filteredColumn.concat(zeros);
-      console.log(newColumn);
 
       squaresArray[i].innerHTML = newColumn[0];
       squaresArray[i + width].innerHTML = newColumn[1];
@@ -130,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // combining rows
+  // Combining rows
   function combineRow() {
     for (let i = 0; i < width * width - 1; i++) {
       if (squaresArray[i].innerHTML === squaresArray[i + 1].innerHTML) {
@@ -139,10 +144,16 @@ document.addEventListener("DOMContentLoaded", () => {
           parseInt(squaresArray[i + 1].innerHTML);
         squaresArray[i].innerHTML = combinedTotal;
         squaresArray[i + 1].innerHTML = 0;
+        score += combinedTotal;
+        scoreDisplay.innerHTML = score;
+        if (score > bestScore) {
+          bestScore = score;
+        }
       }
     }
+    checkForWin();
   }
-  // combining columns
+  // Combining columns
   function combineColumn() {
     for (let i = 0; i < width * width - width; i++) {
       if (squaresArray[i].innerHTML === squaresArray[i + width].innerHTML) {
@@ -151,12 +162,17 @@ document.addEventListener("DOMContentLoaded", () => {
           parseInt(squaresArray[i + width].innerHTML);
         squaresArray[i].innerHTML = combinedTotal;
         squaresArray[i + width].innerHTML = 0;
+        score += combinedTotal;
+        scoreDisplay.innerHTML = score;
+        if (score > bestScore) {
+          bestScore = score;
+        }
       }
     }
+    checkForWin();
   }
 
-  // assign keykodes
-
+  // Assign keycodes
   function control(e) {
     if (e.code == "KeyD") {
       keyRight();
@@ -167,7 +183,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (e.code == "KeyW") {
       keyUp();
     }
+
+    checkForZeros();
+    addColours();
+    bestScoreDisplay.innerHTML = bestScore;
+    localStorage.setItem("bestScore", bestScore);
   }
+  document.addEventListener("keyup", control);
 
   function keyRight() {
     moveRight();
@@ -175,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
     moveRight();
     generateRandomNumber();
   }
+
   function keyLeft() {
     moveLeft();
     combineRow();
@@ -195,6 +218,79 @@ document.addEventListener("DOMContentLoaded", () => {
     moveUp();
     generateRandomNumber();
   }
+  //check for the number 2048 for winning the game
+  function checkForWin() {
+    if (scoreDisplay.innerHTML == 2048) {
+      resultDisplay.innerHTML = "You win!";
+      document.removeEventListener("keyup", control);
+    }
+  }
 
-  document.addEventListener("keyup", control);
+  //check if no zeros and loosing the game
+  function checkForLoose() {
+    let zeros = 0;
+    for (let i = 0; i < squaresArray.length; i++) {
+      if (squaresArray[i].innerHTML == 0) {
+        zeros++;
+      }
+    }
+    if (zeros === 0) {
+      resultDisplay.innerHTML = "You lose!";
+      document.removeEventListener("keyup", control);
+    }
+  }
+  // check if there are zeros, to remove them and make an empty box
+  function checkForZeros() {
+    for (let i = 0; i < squaresArray.length; i++) {
+      if (squaresArray[i].innerHTML == 0) {
+        squaresArray[i].innerHTML = "";
+      }
+    }
+  }
+  //adding colours to the squares
+
+  function addColours() {
+    for (let i = 0; i < squaresArray.length; i++) {
+      if (squaresArray[i].innerHTML == 0)
+        squaresArray[i].style.backgroundColor = "rgba(205, 193, 180)";
+      else if (squaresArray[i].innerHTML == 2)
+        squaresArray[i].style.backgroundColor = "rgba(238, 228, 218)";
+      else if (squaresArray[i].innerHTML == 4)
+        squaresArray[i].style.backgroundColor = "rgba(238, 225, 201)";
+      else if (squaresArray[i].innerHTML == 8)
+        squaresArray[i].style.backgroundColor = "rgba(243, 178, 122)";
+      else if (squaresArray[i].innerHTML == 16)
+        squaresArray[i].style.backgroundColor = "rgba(246, 150, 100)";
+      else if (squaresArray[i].innerHTML == 32)
+        squaresArray[i].style.backgroundColor = "rgba(247, 124,  95)";
+      else if (squaresArray[i].innerHTML == 64)
+        squaresArray[i].style.backgroundColor = "rgba(247,  95,  59)";
+      else if (squaresArray[i].innerHTML == 128)
+        squaresArray[i].style.backgroundColor = "rgba(237, 208, 115)";
+      else if (squaresArray[i].innerHTML == 256)
+        squaresArray[i].style.backgroundColor = "rgba(237, 204,  98)";
+      else if (squaresArray[i].innerHTML == 512)
+        squaresArray[i].style.backgroundColor = "rgba(237, 201,  80)";
+      else if (squaresArray[i].innerHTML == 1024)
+        squaresArray[i].style.backgroundColor = "rgba(237, 197,  63)";
+      else if (squaresArray[i].innerHTML == 2048)
+        squaresArray[i].style.backgroundColor = "rgba(237, 194,  46)";
+      if (squaresArray[i].innerHTML >= 8) {
+        squaresArray[i].style.color = "rgba(249, 246, 242)";
+      } else {
+        squaresArray[i].style.color = "rgba(119, 110, 101)";
+      }
+    }
+  }
+  addColours();
+
+  // function newGame() {
+  //   gridWrapper.innerHTML = "";
+  //   generateRandomNumber();
+  //   createGridBoard();
+  //   score = 0;
+
+  //   addColours();
+  // }
+  // newGameButton.addEventListener("click", newGame);
 });

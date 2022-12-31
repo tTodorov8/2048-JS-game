@@ -1,25 +1,78 @@
+body {
+  background-color: #e1de97;
+  /* color: rgb(54, 52, 50); */
+}
 .game-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
 }
-.grid-wrapper {
+.game-wrapper .grid-wrapper {
   margin: auto;
-  width: 400px;
-  height: 400px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  width: 456px;
+  height: 456px;
+  background-color: #bbada0;
+  border: 7px solid #bbada0;
+  border-radius: 6px;
+  margin-top: 20px;
 
-  border: 1px solid black;
+  /* outline: 1px solid #bbada0; */
 }
-.grid-wrapper div {
+.game-wrapper .grid-wrapper div {
   width: 100px;
   height: 100px;
+  margin: 7px;
+  border-radius: 3px;
+  background-color: #eee4da;
+  color: rgba(119, 110, 101);
+  font-weight: bold;
+  text-align: center;
+  font-size: 60px;
+  line-height: 1.6;
+}
+.game-wrapper .heading {
   display: flex;
   justify-content: center;
   align-items: center;
-  outline: 1px solid red;
-  font-size: 32px;
+}
+.game-wrapper .scores-container {
+  display: flex;
+  max-width: 456px;
+}
+.game-wrapper .scores-container .score {
+  margin: 1px;
+  border-radius: 2px;
+  width: 80px;
+  height: 50px;
+  background-color: #bbada0;
+}
+.game-wrapper .scores-container .score h2,
+span {
+  color: #ffffff;
+  margin: 0;
+}
+.title {
+  margin-right: 150px;
+  color: #6e6964;
+}
+.game-wrapper .result-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.game-wrapper .result-button-wrapper button {
+  border: none;
+  border-radius: 2px;
+  margin-left: 210px;
+  width: 120px;
+  height: 40px;
+  background-color: #6e6964;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
 }

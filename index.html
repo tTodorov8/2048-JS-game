@@ -14,14 +14,24 @@
 
 
     <div class="game-wrapper">
-        <h1>2048 Javascript game</h1>
-        <div class="score-container">
-            <div class="score-title">
-                <h2>Score</h2>
+        <div class="heading">
+            <h1 class="title">2048 Game</h1>
+            <div class="scores-container">
+                <div class="score">
+                    <h2>Score</h2>
+                    <span id="score">0</span>
+                </div>
+                <div class="score best-score">
+                    <h2>Best</h2>
+                    <span id="best-score">0</span>
+                </div>
             </div>
-            <span id="score">0</span>
         </div>
-        <div id="result"></div>
+        <div class="result-button-wrapper">
+            <div id="result">Get to number 2048 !</div>
+            <button id="new-game">New Game</button>
+        </div>
+
         <div class="grid-wrapper">
 
         </div>
