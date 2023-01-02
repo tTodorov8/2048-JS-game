@@ -4,12 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultDisplay = document.querySelector("#result");
   const bestScoreDisplay = document.querySelector("#best-score");
   const newGameButton = document.querySelector("#new-game");
-
   let bestScore = JSON.parse(localStorage.getItem("bestScore"));
   const width = 4;
   let squaresArray = [];
   let score = 0;
-
   function createGridBoard() {
     for (let i = 0; i < width * width; i++) {
       let gridBox = document.createElement("div");
@@ -25,10 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // generate a number
   function generateRandomNumber() {
+    const startNumbers = [2, 4];
     let randomNumber = Math.floor(Math.random() * squaresArray.length);
     if (squaresArray[randomNumber].innerHTML == 0) {
-      squaresArray[randomNumber].innerHTML = 2;
-      checkForLoose();
+      squaresArray[randomNumber].innerHTML =
+        startNumbers[Math.floor(Math.random() * startNumbers.length)];
+
+      checkForLose();
     } else {
       generateRandomNumber();
     }
@@ -227,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //check if no zeros and loosing the game
-  function checkForLoose() {
+  function checkForLose() {
     let zeros = 0;
     for (let i = 0; i < squaresArray.length; i++) {
       if (squaresArray[i].innerHTML == 0) {
@@ -284,13 +285,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   addColours();
 
-  // function newGame() {
-  //   gridWrapper.innerHTML = "";
-  //   generateRandomNumber();
-  //   createGridBoard();
-  //   score = 0;
-
-  //   addColours();
-  // }
-  // newGameButton.addEventListener("click", newGame);
+  // Make a new game
+  function newGame() {
+    gridWrapper.innerHTML = "";
+    squaresArray = [];
+    score = 0;
+    scoreDisplay.innerHTML = score;
+    createGridBoard();
+    addColours();
+  }
+  newGameButton.addEventListener("click", newGame);
 });
